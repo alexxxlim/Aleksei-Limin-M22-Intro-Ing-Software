@@ -38,7 +38,6 @@ public class OrderTest {
         assertEquals(0.0, order.getGrossTotal(), EPS);
     }
 
-    //P.S. Aquí he probado nueva metodología del testing para mí
     @Test
     void getGrossTotal_singleArticle() {
         Article a = new Article("ArticleForTest", 5, 2.2, 0.0);
@@ -78,7 +77,77 @@ public class OrderTest {
 
 
     //get discounted total
+
+    @Test
+    void getDiscountedTotal_normalCase() {
+        List<Article> articles = Arrays.asList(
+                new Article("ArticleForTest1", 2, 10.0, 10.0),
+                new Article("ArticleForTest2", 3, 5.0, 20.0)
+        );
+        Order order = new Order("008", articles);
+        assertEquals(30.0, order.getDiscountedTotal(), EPS);
+    }
+
+    @Test
+    void getDiscountedTotal_allZeroDiscounts() {
+        List<Article> articles = Arrays.asList(
+                new Article("ArticleForTest1", 2, 10.0, 0.0),
+                new Article("ArticleForTest2", 3, 5.0, 0.0)
+        );
+        Order order = new Order("009", articles);
+        assertEquals(order.getGrossTotal(), order.getDiscountedTotal(), EPS);
+    }
+
+    @Test
+    void getDiscountedTotal_allTotalDiscounts() {
+        List<Article> articles = Arrays.asList(
+                new Article("ArticleForTest1", 2, 10.0, 100.0),
+                new Article("ArticleForTest2", 3, 5.0, 100.0)
+        );
+        Order order = new Order("010", articles);
+        assertEquals(0.0, order.getDiscountedTotal(), EPS);
+    }
+
+    @Test
+    void getDiscountedTotal_mixedDiscounts() {
+        List<Article> articles = Arrays.asList(
+                new Article("ArticleForTest1", 2, 10.0, 0.0),
+                new Article("ArticleForTest2", 1, 10.0, 10.0),
+                new Article("ArticleForTest3", 2, 10.0, 50.0)
+        );
+        Order order = new Order("011", articles);
+        assertEquals(39.0, order.getDiscountedTotal(), EPS);
+    }
+
+    @Test
+    void getDiscountedTotal_invalidDiscounts() {
+        List<Article> articlesHigh = Arrays.asList(
+                new Article("ArticleForTest11", 2, 10.0, 150.0)
+        );
+        Order orderHigh = new Order("0121", articlesHigh);
+        assertThrows(IllegalArgumentException.class, orderHigh::getDiscountedTotal);
+
+        List<Article> articlesLow = Arrays.asList(
+                new Article("ArticleForTest21", 3, 5.0, -5.0)
+        );
+        Order orderLow = new Order("0122", articlesLow);
+        assertThrows(IllegalArgumentException.class, orderLow::getDiscountedTotal);
+    }
+
+    //P.S. Aquí he probado nueva metodología del testing para mí
+    @Test
+    void discountedTotal_invariant() {
+        List<Article> articles = Arrays.asList(
+                new Article("ArticleForTest1", 2, 10.0, 0.0),
+                new Article("ArticleForTest2", 1, 15.0, 10.0),
+                new Article("ArticleForTest3", 3, 5.0, 50.0)
+        );
+        Order order = new Order("013", articles);
+
+        double gross = order.getGrossTotal();
+        double discounted = order.getDiscountedTotal();
+
+        assertEquals(false, discounted > gross);
+    }
+
 }
-
-
-
