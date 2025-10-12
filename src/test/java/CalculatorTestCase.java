@@ -33,27 +33,27 @@ public class CalculatorTestCase {
     //multiply uint*double
     @Test
     void multiplyIntDouble_normalCase() {
-        assertEquals(4.5, calc.multiplyIntDouble(2, 2.25));
+        assertEquals(4.5, calc.multiplyIntDouble(2, 2.25), EPS);
     }
 
     @Test
     void multiplyIntDouble_withZeroInt() {
-        assertEquals(0, calc.multiplyIntDouble(0, 3.7));
+        assertEquals(0, calc.multiplyIntDouble(0, 3.7), EPS);
     }
 
     @Test
     void multiplyIntDouble_withZeroDouble() {
-        assertEquals(0.0, calc.multiplyIntDouble(4, 0.0));
+        assertEquals(0.0, calc.multiplyIntDouble(4, 0.0), EPS);
     }
 
     @Test
     void multiplyIntDouble_withNegativeInt() {
-        assertEquals(-7.0, calc.multiplyIntDouble(-2, 3.5));
+        assertEquals(-7.0, calc.multiplyIntDouble(-2, 3.5), EPS);
     }
 
     @Test
     void multiplyIntDouble_withNegativeDouble() {
-        assertEquals(7.0, calc.multiplyIntDouble(-2, -3.5));
+        assertEquals(7.0, calc.multiplyIntDouble(-2, -3.5), EPS);
     }
 
     // concat

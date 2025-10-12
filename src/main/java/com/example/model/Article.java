@@ -47,6 +47,7 @@ public class Article {
         this.discount = discount;
     }
 
+    //funciones
     public double getGrossAmount() {
         Calculator calculator = new Calculator();
         double grossAmount = calculator.multiplyIntDouble(quantity, price);
