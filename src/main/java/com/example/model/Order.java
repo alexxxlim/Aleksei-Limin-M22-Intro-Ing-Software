@@ -60,32 +60,29 @@ public class Order {
 
         sb.append("Order ID: ").append(id).append("\n");
 
-        int totalNumArticles = 0;
+        int numPosiciones = (articles != null) ? articles.size() : 0;
+        sb.append("Número de posiciones: ").append(numPosiciones).append("\n");
+
+        int totalUnidades = 0;
         if (articles != null) {
             for (Article a : articles) {
-                totalNumArticles += a.getQuantity();
+                totalUnidades += a.getQuantity();
             }
         }
-        sb.append("Número de artículos: ").append(totalNumArticles).append("\n");
+        sb.append("Cantidad total de unidades: ").append(totalUnidades).append("\n");
 
-        int totalPrecio = 0;
-        if (articles != null) {
-            for (Article a : articles) {
-                totalPrecio += a.getPrice();
-            }
-        }
-        sb.append("Total bruto: ").append(totalPrecio).append("\n");
+        sb.append("Valor total bruto: ").append(getGrossTotal()).append("\n");
+        sb.append("Valor total con descuento: ").append(getDiscountedTotal()).append("\n");
 
-        sb.append("Total con descuento: ").append(articles != null ? articles.size() : 0).append("\n");
-        sb.append("Detalles de artículos: \n");
-
-        if (articles == null || articles.isEmpty()) {
-            sb.append("...Error. Sin Artículos... \n");
-        } else {
+        sb.append("Detalles de artículos:\n");
+        if (articles != null && !articles.isEmpty()) {
             for (Article article : articles) {
                 sb.append(article.toString()).append("\n");
             }
+        } else {
+            sb.append("...Error. No hay artículos... \n");
         }
+
         return sb.toString();
     }
 }

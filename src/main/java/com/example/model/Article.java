@@ -64,10 +64,10 @@ public class Article {
     @Override
     public String toString() {
         return "- Artículo: " + name + "\n" +
-                "    Cantidad: " + quantity + "\n" +
-                "    Precio unitario: " + price + "\n" +
-                "    Descuento: " + discount + "%\n" +
-                "    Total bruto: " + getGrossAmount() + "\n" +
-                "    Total con descuento: " + getDiscountedAmount();
+                "\tCantidad: " + quantity + "\n" +
+                "\tPrecio unitario: " + price + "\n" +
+                "\tDescuento: " + discount + "%\n" +
+                "\tTotal bruto: " + getGrossAmount() + "\n" +
+                "\tTotal con descuento: " + getDiscountedAmount();
     }
 }

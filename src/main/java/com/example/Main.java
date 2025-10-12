@@ -16,16 +16,18 @@ public class Main {
     public static void main(String[] args) {
 
         log.info("Starting Order Managment System. . .");
+        System.out.println();
 
         Article articleRaton = new Article("Ratón", 13, 10.99, 15.00);
 
         System.out.println(articleRaton.getGrossAmount());
         System.out.println(articleRaton.getDiscountedAmount());
+        System.out.println();
 
         Article articleTeclado = new Article("Teclado", 7, 23.75, 10.00);
 
         List<Article> articles1 = Arrays.asList(articleRaton, articleTeclado);
-        Order order1 = new Order("A001", articles1);
+        Order order1 = new Order("A12345", articles1);
         System.out.println(order1.toString());
     }
 }
