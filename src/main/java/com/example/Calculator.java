@@ -10,6 +10,11 @@ public class Calculator {
     public int multiply(int a, int b) {
         return a * b;
     }
+//Multiply integer and double
+
+    public double multiplyIntDouble(int a, double b) {
+        return a * b;
+    }
 // Concatenate two strings
 
     public String concat(String a, String b) {
@@ -28,8 +33,8 @@ public class Calculator {
     public double discount(double amount, double percent) {
         if (percent < 0 || percent > 100) {
             throw new IllegalArgumentException("Percentage must be between 0 and 100");
-}
-return amount - (amount * percent / 100.0);
+        }
+        return amount - (amount * percent / 100.0);
     }
 // New: calculate the total of a list of amounts
 

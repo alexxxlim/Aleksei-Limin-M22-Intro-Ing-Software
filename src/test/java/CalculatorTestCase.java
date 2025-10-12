@@ -12,7 +12,7 @@ public class CalculatorTestCase {
     private final Calculator calc = new Calculator();
     private static final double EPS = 1e-9;
 
-    // multiply
+    // multiply int*int
     @Test
     void multiply_normalCase() {
         assertEquals(6, calc.multiply(2, 3));
@@ -27,7 +27,33 @@ public class CalculatorTestCase {
     @Test
     void multiply_withNegativeNumbers() {
         assertEquals(-15, calc.multiply(-3, 5));
-        assertEquals(15,  calc.multiply(-3, -5));
+        assertEquals(15, calc.multiply(-3, -5));
+    }
+
+    //multiply uint*double
+    @Test
+    void multiplyIntDouble_normalCase() {
+        assertEquals(4.5, calc.multiplyIntDouble(2, 2.25));
+    }
+
+    @Test
+    void multiplyIntDouble_withZeroInt() {
+        assertEquals(0, calc.multiplyIntDouble(0, 3.7));
+    }
+
+    @Test
+    void multiplyIntDouble_withZeroDouble() {
+        assertEquals(0.0, calc.multiplyIntDouble(4, 0.0));
+    }
+
+    @Test
+    void multiplyIntDouble_withNegativeInt() {
+        assertEquals(-7.0, calc.multiplyIntDouble(-2, 3.5));
+    }
+
+    @Test
+    void multiplyIntDouble_withNegativeDouble() {
+        assertEquals(7.0, calc.multiplyIntDouble(-2, -3.5));
     }
 
     // concat
