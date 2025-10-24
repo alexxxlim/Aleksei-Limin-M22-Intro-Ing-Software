@@ -5,13 +5,16 @@ import com.example.Calculator;
 public class Article {
     private String name;
     private int quantity;
-    private double price;
+    private double unitPrice;
     private double discount;
 
-    public Article(String name, int quantity, double price, double discount) {
+    public Article() {
+    }
+
+    public Article(String name, int quantity, double unitPrice, double discount) {
         this.name = name;
         this.quantity = quantity;
-        this.price = price;
+        this.unitPrice = unitPrice;
         this.discount = discount;
     }
 
@@ -23,8 +26,8 @@ public class Article {
         return quantity;
     }
 
-    public double getPrice() {
-        return price;
+    public double getUnitPrice() {
+        return unitPrice;
     }
 
     public double getDiscount() {
@@ -39,8 +42,8 @@ public class Article {
         this.quantity = quantity;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
     public void setDiscount(double discount) {
@@ -50,7 +53,7 @@ public class Article {
     //funciones
     public double getGrossAmount() {
         Calculator calculator = new Calculator();
-        double grossAmount = calculator.multiplyIntDouble(quantity, price);
+        double grossAmount = calculator.multiplyIntDouble(quantity, unitPrice);
 
         return grossAmount;
     }
@@ -66,7 +69,7 @@ public class Article {
     public String toString() {
         return "- Artículo: " + name + "\n" +
                 "\tCantidad: " + quantity + "\n" +
-                "\tPrecio unitario: " + price + "\n" +
+                "\tPrecio unitario: " + unitPrice + "\n" +
                 "\tDescuento: " + discount + "%\n" +
                 "\tTotal bruto: " + getGrossAmount() + "\n" +
                 "\tTotal con descuento: " + getDiscountedAmount();

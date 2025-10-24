@@ -1,0 +1,39 @@
+[
+  {
+    "id": "O001",
+    "articles": [
+      { "name": "Keyboard", "quantity": 2, "unitPrice": 50, "discount": 10 },
+      { "name": "Mouse", "quantity": 1, "unitPrice": 30, "discount": 0 },
+      { "name": "Charger", "quantity": 1, "unitPrice": 20, "discount": 5 }
+    ]
+  },
+  {
+    "id": "O002",
+    "articles": [
+      { "name": "Monitor", "quantity": 1, "unitPrice": 200, "discount": 5 },
+      { "name": "Headset", "quantity": 2, "unitPrice": 40, "discount": 15 }
+    ]
+  },
+  {
+    "id": "O003",
+    "articles": [
+      { "name": "Call of Duty", "quantity": 1, "unitPrice": 50, "discount": 0 },
+      { "name": "Gaming Chair", "quantity": 1, "unitPrice": 440, "discount": 10 }
+    ]
+  },
+  {
+    "id": "O004",
+    "articles": [
+      { "name": "Laptop", "quantity": 3, "unitPrice": 890, "discount": 5 }
+    ]
+  },
+    {
+    "id": "O005",
+    "articles": [
+      { "name": "Iphone X", "quantity": 1, "unitPrice": 500, "discount": 2 },
+      { "name": "Nvidia Graphic card", "quantity": 2, "unitPrice": 650, "discount": 20 },
+      { "name": "Apple Airpods 3", "quantity": 1, "unitPrice": 99.99, "discount": 13 },
+      { "name": "Garmin Fenix 7X", "quantity": 4, "unitPrice": 829, "discount": 15 }
+    ]
+  }
+]
