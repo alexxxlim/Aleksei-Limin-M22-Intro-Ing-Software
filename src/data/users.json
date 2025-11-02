@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "email": "nombre@hospital.com",
+      "password": "old_password123"
+    },
+    {
+      "email": "ana@hospital.com",
+      "password": "ana_password"
+    }
+  ]
+}
