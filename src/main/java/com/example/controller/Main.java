@@ -1,16 +1,18 @@
-package com.example;
+package com.example.controller;
 
-import com.example.model.Article;
-import com.example.model.Order;
+import com.example.model.*;
+import com.example.view.*;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+
 import java.io.InputStream;
 import java.io.IOException;
+
 import java.util.List;
 
 public class Main {
@@ -36,5 +38,11 @@ public class Main {
         }
 
         log.info("All orders loaded: {}", orders.size());
+
+        //Initialize MVC
+        SwingUtilities.invokeLater(() -> {
+            OrderView view = new OrderView();
+            new OrderController(view, orders);
+        });
     }
 }

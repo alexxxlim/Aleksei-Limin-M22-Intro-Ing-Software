@@ -1,7 +1,5 @@
 package com.example.model;
 
-import com.example.Calculator;
-
 public class Article {
     private String name;
     private int quantity;
