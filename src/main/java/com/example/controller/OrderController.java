@@ -40,19 +40,19 @@ public class OrderController {
 
         if (id == null || id.isEmpty()) {
             view.displayOrder(null);
+            return;
         }
 
-//Display order if found, else display "Order not found..."
+        // Display order if found, else display "Order not found..."
         Order foundOrder = null;
         for (Order order : orders) {
             if (order.getId() != null && order.getId().equalsIgnoreCase(id)) {
-                {
-                    foundOrder = order;
-                    break;
-                }
+                foundOrder = order;
+                break;
             }
-
-            view.displayOrder(foundOrder);
         }
+
+        view.displayOrder(foundOrder);
     }
 }
+
