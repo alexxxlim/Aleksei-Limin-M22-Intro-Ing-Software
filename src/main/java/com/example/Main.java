@@ -1,5 +1,6 @@
-package com.example.controller;
+package com.example;
 
+import com.example.controller.*;
 import com.example.model.*;
 import com.example.view.*;
 
