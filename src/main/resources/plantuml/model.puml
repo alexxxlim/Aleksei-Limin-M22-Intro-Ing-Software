@@ -1,0 +1,115 @@
+@startuml
+!theme plain
+
+' Diagrama de clases del sistema de gestión de pedidos
+' Order Management System - Class Diagram
+
+package "com.example" {
+    class Main {
+        - {static} Logger log
+        + {static} main(String[] args) : void
+    }
+}
+
+package "com.example.controller" {
+    class OrderController {
+        - Logger log
+        - OrderView view
+        - List<Order> orders
+        - Searcher searcher
+        + OrderController(OrderView, List<Order>)
+        - searchOrder() : void
+    }
+}
+
+package "com.example.model" {
+    class Order {
+        - String id
+        - List<Article> articles
+        + Order()
+        + Order(String, List<Article>)
+        + getId() : String
+        + getArticles() : List<Article>
+        + setId(String) : void
+        + setArticles(List<Article>) : void
+        + getGrossTotal() : double
+        + getDiscountedTotal() : double
+        + toString() : String
+    }
+
+    class Article {
+        - String name
+        - int quantity
+        - double unitPrice
+        - double discount
+        + Article()
+        + Article(String, int, double, double)
+        + getName() : String
+        + getQuantity() : int
+        + getUnitPrice() : double
+        + getDiscount() : double
+        + setName(String) : void
+        + setQuantity(int) : void
+        + setUnitPrice(double) : void
+        + setDiscount(double) : void
+        + getGrossAmount() : double
+        + getDiscountedAmount() : double
+        + toString() : String
+    }
+
+    class Calculator {
+        + {static} String EMPTY
+        + multiply(int, int) : int
+        + multiplyIntDouble(int, double) : double
+        + concat(String, String) : String
+        + sum(double, double) : double
+        + discount(double, double) : double
+        + calculateTotal(List<Double>) : double
+    }
+
+    class Searcher {
+        + searchExactPhrase(String, List<String>) : boolean
+        + searchWord(String, List<String>) : boolean
+        + getWordByIndex(List<String>, int) : String
+        + searchByPrefix(String, List<String>) : List<String>
+        + filterByKeyword(String, List<String>) : List<String>
+    }
+}
+
+package "com.example.view" {
+    class OrderView {
+        - JTextField searchField
+        - JButton searchButton
+        - JTextArea resultArea
+        + OrderView()
+        + getSearchId() : String
+        + getSearchButton() : JButton
+        + displayOrder(Order) : void
+    }
+}
+
+' Relaciones entre clases
+
+' Composición: Order contiene Article
+Order "1" *-- "0..*" Article : contains
+
+' Asociaciones: OrderController utiliza otras clases
+OrderController "1" --> "1" OrderView : uses
+OrderController "1" --> "1..*" Order : manages
+OrderController "1" --> "1" Searcher : has
+
+' Dependencias (uso sin almacenar referencia)
+OrderView ..> Order : displays
+Article ..> Calculator : uses
+Order ..> Article : calculates totals
+
+' Herencia: OrderView extends JFrame
+OrderView --|> javax.swing.JFrame
+
+' Main crea e inicializa
+Main ..> OrderView : creates
+Main ..> OrderController : creates
+Main ..> Order : loads
+
+@enduml
+

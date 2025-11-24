@@ -1,0 +1,46 @@
+@startuml
+!theme plain
+
+' Diagrama de casos de uso
+' Use Case Diagram - Order Management System
+
+left to right direction
+
+actor Usuario as user
+
+rectangle "Sistema de Gestión de Pedidos" {
+    usecase (Visualizar pedido) as UC1
+    usecase (Buscar pedido por ID) as UC2
+    usecase (Ver detalles del pedido) as UC3
+}
+
+' Relaciones del actor con casos de uso
+user --> UC1 : Utiliza
+
+' Relaciones entre casos de uso
+UC1 ..> UC2 : <<include>>\n(siempre se ejecuta)
+UC1 ..> UC3 : <<include>>\n(siempre se ejecuta)
+
+note right of UC1
+  Caso de uso principal.
+  El usuario puede visualizar
+  información del pedido a través de la GUI.
+end note
+
+note right of UC2
+  Búsqueda de pedido por identificador.
+  Se incluye en el proceso de visualización.
+  El sistema busca el pedido en la lista
+  cargada de pedidos (sin distinguir mayúsculas/minúsculas).
+end note
+
+note right of UC3
+  Visualización de información detallada
+  del pedido: ID, número de posiciones,
+  cantidad total de unidades, sumas
+  totales (bruto y con descuento),
+  detalles de cada artículo.
+end note
+
+@enduml
+

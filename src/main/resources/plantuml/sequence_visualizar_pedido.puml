@@ -1,0 +1,134 @@
+@startuml
+!theme plain
+
+' Diagrama de secuencia: Visualización de pedido
+' Sequence Diagram: Visualizar Pedido
+
+actor Usuario as user
+participant "OrderView" as view
+participant "OrderController" as controller
+participant "Order" as order
+participant "Article" as article
+participant "Calculator" as calc
+
+user -> view : Introduce ID del pedido\ny presiona el botón Search
+
+activate view
+view -> controller : ActionListener invoca\nsearchOrder()
+activate controller
+
+controller -> view : getSearchId()
+activate view
+view --> controller : String id
+deactivate view
+
+alt ID vacío o null
+    controller -> view : displayOrder(null)
+    activate view
+    view -> view : resultArea.setText("Order not found...")
+    deactivate view
+else ID no vacío
+    loop Para cada Order en la lista
+        controller -> order : getId()
+        activate order
+        order --> controller : String id
+        deactivate order
+        
+        controller -> controller : equalsIgnoreCase(id)
+    end
+    
+    controller -> view : displayOrder(foundOrder)
+    activate view
+    
+    view -> order : toString()
+    activate order
+    
+    order -> order : getGrossTotal()
+    activate order
+    loop Para cada Article
+        order -> article : getGrossAmount()
+        activate article
+        article -> calc : new Calculator()
+        activate calc
+        article -> calc : multiplyIntDouble(quantity, unitPrice)
+        calc --> article : double
+        deactivate calc
+        article --> order : double grossAmount
+        deactivate article
+    end
+    order --> order : double total
+    deactivate order
+    
+    order -> order : getDiscountedTotal()
+    activate order
+    loop Para cada Article
+        order -> article : getDiscountedAmount()
+        activate article
+        article -> article : getGrossAmount()
+        activate article
+        article -> calc : new Calculator()
+        activate calc
+        article -> calc : multiplyIntDouble(quantity, unitPrice)
+        calc --> article : double
+        deactivate calc
+        article --> article : double grossAmount
+        deactivate article
+        
+        article -> calc : discount(grossAmount, discount)
+        activate calc
+        calc --> article : double discountedAmount
+        deactivate calc
+        article --> order : double discountedAmount
+        deactivate article
+    end
+    order --> order : double total
+    deactivate order
+    
+    loop Para cada Article
+        order -> article : toString()
+        activate article
+        article -> article : getGrossAmount()
+        activate article
+        article -> calc : new Calculator()
+        activate calc
+        article -> calc : multiplyIntDouble(quantity, unitPrice)
+        calc --> article : double
+        deactivate calc
+        article --> article : double
+        deactivate article
+        
+        article -> article : getDiscountedAmount()
+        activate article
+        article -> article : getGrossAmount()
+        activate article
+        article -> calc : new Calculator()
+        activate calc
+        article -> calc : multiplyIntDouble(quantity, unitPrice)
+        calc --> article : double
+        deactivate calc
+        article --> article : double
+        deactivate article
+        
+        article -> calc : discount(grossAmount, discount)
+        activate calc
+        calc --> article : double
+        deactivate calc
+        article --> article : double
+        deactivate article
+        
+        article --> order : String
+        deactivate article
+    end
+    
+    order --> view : String (formatted order details)
+    deactivate order
+    
+    view -> view : resultArea.setText(order.toString())
+    deactivate view
+end
+
+deactivate controller
+deactivate view
+
+@enduml
+
