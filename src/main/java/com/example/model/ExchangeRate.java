@@ -14,7 +14,6 @@ public class ExchangeRate {
     private static final String API_URL =
             "https://api.exchangerate.host/latest?base=EUR&symbols=USD";
 
-    // запасной курс, если API не работает (можешь поставить любое адекватное значение)
     private static final BigDecimal FALLBACK_RATE = new BigDecimal("1.08");
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
@@ -33,7 +32,6 @@ public class ExchangeRate {
                     httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                // если API ответил криво — используем запасной
                 System.out.println("WARN: API status code = " + response.statusCode()
                         + ", using fallback rate " + FALLBACK_RATE);
                 return FALLBACK_RATE;
@@ -44,9 +42,6 @@ public class ExchangeRate {
                 System.out.println("WARN: Empty API response, using fallback rate " + FALLBACK_RATE);
                 return FALLBACK_RATE;
             }
-
-            // можно оставить для отладки, потом убрать
-            // System.out.println("DEBUG API response: " + jsonResponse);
 
             String usdValue = extractUsdFromJson(jsonResponse);
             if (usdValue == null) {
@@ -64,7 +59,6 @@ public class ExchangeRate {
             }
 
         } catch (Exception e) {
-            // любая ошибка сети / таймаут → запасной курс
             System.out.println("WARN: Exception while calling API: " + e.getMessage()
                     + ", using fallback rate " + FALLBACK_RATE);
             return FALLBACK_RATE;
@@ -72,7 +66,6 @@ public class ExchangeRate {
     }
 
     private static String extractUsdFromJson(String json) {
-        // Ищем "USD":число (с точкой)
         Pattern pattern = Pattern.compile("\"USD\"\\s*:\\s*(-?[0-9]+(?:\\.[0-9]+)?)",
                 Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(json);
