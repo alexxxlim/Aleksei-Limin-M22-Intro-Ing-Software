@@ -9,37 +9,117 @@ left to right direction
 actor Usuario as user
 
 rectangle "Sistema de Gestión de Pedidos" {
+    ' Casos de uso principales
     usecase (Visualizar pedido) as UC1
-    usecase (Buscar pedido por ID) as UC2
-    usecase (Ver detalles del pedido) as UC3
+    usecase (Crear nuevo pedido) as UC2
+    usecase (Editar pedido existente) as UC3
+    usecase (Eliminar pedido) as UC4
+    usecase (Cargar pedidos al iniciar) as UC5
+    
+    ' Casos de uso secundarios - Visualización
+    usecase (Buscar pedido por ID) as UC1_1
+    usecase (Seleccionar pedido desde lista) as UC1_2
+    usecase (Ver detalles del pedido) as UC1_3
+    usecase (Convertir moneda EUR/USD) as UC1_4
+    
+    ' Casos de uso secundarios - Crear pedido
+    usecase (Agregar artículos al pedido) as UC2_1
+    usecase (Generar ID automático) as UC2_2
+    usecase (Calcular totales) as UC2_3
+    usecase (Guardar pedido en JSON) as UC2_4
+    
+    ' Casos de uso secundarios - Editar pedido
+    usecase (Modificar cantidad de artículos) as UC3_1
+    usecase (Modificar descuentos) as UC3_2
+    usecase (Calcular totales actualizados) as UC3_3
+    usecase (Guardar cambios en JSON) as UC3_4
+    
+    ' Casos de uso secundarios - Eliminar pedido
+    usecase (Confirmar eliminación) as UC4_1
+    usecase (Eliminar de memoria) as UC4_2
+    usecase (Actualizar lista) as UC4_3
+    
+    ' Casos de uso secundarios - Cargar pedidos
+    usecase (Cargar desde JSON) as UC5_1
 }
 
-' Relaciones del actor con casos de uso
+' Relaciones del actor con casos de uso principales
 user --> UC1 : Utiliza
+user --> UC2 : Utiliza
+user --> UC3 : Utiliza
+user --> UC4 : Utiliza
 
-' Relaciones entre casos de uso
-UC1 ..> UC2 : <<include>>\n(siempre se ejecuta)
-UC1 ..> UC3 : <<include>>\n(siempre se ejecuta)
+' Relaciones entre casos de uso - Visualizar pedido
+UC1 ..> UC1_1 : <<include>>\n(búsqueda por texto)
+UC1 ..> UC1_2 : <<include>>\n(selección desde combo)
+UC1 ..> UC1_3 : <<include>>\n(siempre se ejecuta)
+UC1 ..> UC1_4 : <<extend>>\n(conversión opcional)
 
+' Relaciones entre casos de uso - Crear nuevo pedido
+UC2 ..> UC2_1 : <<include>>\n(agregar múltiples artículos)
+UC2 ..> UC2_2 : <<include>>\n(siempre se ejecuta)
+UC2 ..> UC2_3 : <<include>>\n(cálculo automático)
+UC2 ..> UC2_4 : <<include>>\n(guardar en archivo)
+
+' Relaciones entre casos de uso - Editar pedido
+UC3 ..> UC3_1 : <<include>>\n(modificar cantidad)
+UC3 ..> UC3_2 : <<include>>\n(modificar descuentos)
+UC3 ..> UC3_3 : <<include>>\n(recalcular totales)
+UC3 ..> UC3_4 : <<include>>\n(guardar cambios)
+
+' Relaciones entre casos de uso - Eliminar pedido
+UC4 ..> UC4_1 : <<include>>\n(confirmar acción)
+UC4 ..> UC4_2 : <<include>>\n(eliminar objeto)
+UC4 ..> UC4_3 : <<include>>\n(actualizar UI)
+UC4 ..> UC2_4 : <<include>>\n(guardar cambios)
+
+' Relaciones entre casos de uso - Cargar pedidos
+UC5 ..> UC5_1 : <<include>>\n(lectura del archivo)
+
+' Notas descriptivas
 note right of UC1
-  Caso de uso principal.
-  El usuario puede visualizar
-  información del pedido a través de la GUI.
+  Caso de uso principal para visualizar
+  información del pedido. Permite buscar
+  por ID o seleccionar desde lista.
+  Incluye conversión opcional de moneda.
 end note
 
 note right of UC2
-  Búsqueda de pedido por identificador.
-  Se incluye en el proceso de visualización.
-  El sistema busca el pedido en la lista
-  cargada de pedidos (sin distinguir mayúsculas/minúsculas).
+  Crear un nuevo pedido con múltiples
+  artículos. El sistema genera
+  automáticamente el ID (formato O000+)
+  y calcula los totales.
 end note
 
 note right of UC3
-  Visualización de información detallada
-  del pedido: ID, número de posiciones,
-  cantidad total de unidades, sumas
-  totales (bruto y con descuento),
-  detalles de cada artículo.
+  Editar un pedido existente modificando
+  cantidad y/o descuentos de los artículos.
+  Los totales se recalculan automáticamente.
+end note
+
+note right of UC4
+  Eliminar un pedido de la lista.
+  Requiere confirmación del usuario
+  y actualiza el archivo JSON.
+end note
+
+note right of UC5
+  Cargar todos los pedidos desde el
+  archivo JSON al iniciar la aplicación.
+  Se ejecuta automáticamente al arrancar.
+end note
+
+note right of UC1_4
+  Obtiene el tipo de cambio EUR/USD
+  desde una API externa y convierte
+  el total del pedido a USD.
+  Puede fallar si no hay conexión.
+end note
+
+note right of UC2_2
+  Genera ID en formato O000, O001, etc.
+  basado en el ID más alto existente
+  en la lista de pedidos.
 end note
 
 @enduml
