@@ -1,15 +1,16 @@
 # Proyecto Java Maven - Sistema de Gestión de Pedidos
 
-Este proyecto es una aplicación de gestión de pedidos desarrollada en Java utilizando Maven, Swing (JFrame) y arquitectura MVC (Modelo-Vista-Controlador). La aplicación permite buscar pedidos, calcular totales con descuentos y realizar conversión de moneda EUR a USD utilizando una API externa.
+Este proyecto es una aplicación completa de gestión de pedidos desarrollada en Java utilizando Maven, Swing (JFrame) y arquitectura MVC (Modelo-Vista-Controlador). La aplicación permite crear, visualizar, editar y eliminar pedidos, calcular totales con descuentos, y realizar conversión de moneda EUR a USD utilizando una API externa.
 
 ## Tabla de Contenidos
 
 - [Introducción](#introducción)
 - [Requisitos](#requisitos)
 - [Configuración del Entorno](#configuración-del-entorno)
-- [Estructura del Proyecto](#estructura-del-proyecto)
 - [Compilación y Ejecución](#compilación-y-ejecución)
-- [Integración de API de Conversión de Moneda](#integración-de-api-de-conversión-de-moneda)
+- [Manual de Usuario](#manual-de-usuario)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Arquitectura y Tecnologías](#arquitectura-y-tecnologías)
 - [Contribución](#contribución)
 - [Licencia](#licencia)
 
@@ -17,132 +18,245 @@ Este proyecto es una aplicación de gestión de pedidos desarrollada en Java uti
 
 ## Introducción
 
-Este es un proyecto de sistema de gestión de pedidos desarrollado en **Java** utilizando **Maven** para la gestión de dependencias. El proyecto implementa una aplicación de escritorio con interfaz gráfica Swing que permite cargar, buscar y visualizar pedidos con sus artículos y cálculos de totales. Además, incluye funcionalidad de conversión de moneda EUR a USD en tiempo real.
+Sistema de gestión de pedidos desarrollado en **Java 17** con **Maven**, que implementa una aplicación de escritorio con interfaz gráfica Swing. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre pedidos con sus artículos, cálculos automáticos de totales y conversión de moneda EUR a USD en tiempo real.
+
+### Características Principales
+
+- Crear, visualizar, editar y eliminar pedidos
+- Gestión de múltiples artículos por pedido
+- Cálculo automático de totales brutos y con descuentos
+- Conversión de moneda EUR a USD en tiempo real
+- Persistencia de datos en archivo JSON
+- Generación automática de IDs (formato O000, O001, etc.)
+- Carga automática de pedidos al iniciar
 
 ## Requisitos
 
-Antes de comenzar, asegúrate de tener instalado lo siguiente en tu sistema:
-
-- **Java 17+** (JDK) - El proyecto está configurado para Java 17. Puedes descargarlo desde [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) o [OpenJDK](https://openjdk.java.net/)
-- **Maven** - Puedes instalar Maven siguiendo las instrucciones en su sitio oficial: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
-- **IDE recomendada:** Visual Studio Code o cualquier editor de tu preferencia con soporte para Java.
+- **Java 17+** (JDK) - Descarga desde [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) o [OpenJDK](https://openjdk.java.net/)
+- **Maven** - Instrucciones en [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
+- **IDE recomendada:** Visual Studio Code, IntelliJ IDEA o Eclipse
 
 ## Configuración del Entorno
 
-### 1. Instalar Java
-Asegúrate de que tienes **Java 17** o una versión superior instalada. Puedes verificarlo con el siguiente comando:
+### Verificar Instalación
 
 ```bash
-java -version
+java -version  # Verificar Java 17+
+mvn -version   # Verificar Maven
+//(mvnd -version) # Verificar Maven con Daemon
 ```
 
-### 2. Instalar Maven
-Una vez que tengas Java instalado, puedes proceder con la instalación de Maven. Para verificar que Maven esté instalado correctamente, ejecuta el siguiente comando:
-
-```bash
-mvn -version
-```
-
-### 3. Configurar el IDE
-Para trabajar con este proyecto, puedes usar cualquier IDE que soporte Java, como Visual Studio Code, IntelliJ IDEA, Eclipse, etc. Si estás usando Visual Studio Code, asegúrate de instalar las siguientes extensiones:
+### Extensiones IDE (Visual Studio Code)
 
 - Java Extension Pack (de Microsoft)
 - Maven for Java
+- PlantUML (de jebbs)
 
-## Estructura del proyecto
+## Compilación y Ejecución
 
-```plaintext
-Aleksei-Limin-M22-Intro-Ing-Software/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/
-│   │   │       └── example/
-│   │   │           ├── Main.java
-│   │   │           ├── controller/
-│   │   │           │   └── OrderController.java
-│   │   │           ├── model/
-│   │   │           │   ├── Order.java
-│   │   │           │   ├── Article.java
-│   │   │           │   ├── Calculator.java
-│   │   │           │   ├── Searcher.java
-│   │   │           │   └── ExchangeRate.java
-│   │   │           └── view/
-│   │   │               └── OrderView.java
-│   │   └── resources/
-│   │       ├── orders.json
-│   │       ├── app.png
-│   │       └── logback.xml
-│   └── test/
-│       └── java/
-├── pom.xml
-├── target/
-└── README.md
-```
-
-## Compilación y ejecución
-
-Para compilar y ejecutar el proyecto, sigue estos pasos:
-
-Abre una terminal en la raíz del proyecto.
-
-Ejecuta el siguiente comando para compilar el proyecto:
 ```bash
+# Compilar el proyecto
 mvn clean install
-```
-Para ejecutar la aplicación, usa el siguiente comando:
-```bash
+
+# Ejecutar la aplicación
 mvn exec:java
 ```
 
-## Integración de API de Conversión de Moneda
+Alternativamente, ejecuta la clase `Main` directamente desde tu IDE.
 
-El proyecto incluye funcionalidad de conversión de moneda EUR a USD utilizando una API externa.
+## Manual de Usuario
 
-### API Endpoint Utilizado
+### Ventana Principal
 
-La aplicación utiliza el siguiente endpoint para obtener el tipo de cambio en tiempo real:
+Al iniciar la aplicación, se muestra la ventana principal con:
+- **Campo de búsqueda**: Para buscar pedidos por ID
+- **Lista desplegable**: Para seleccionar pedidos desde la lista
+- **Botones**: "Add New Order", "Edit Order", "Delete Order"
+- **Área de visualización**: Muestra los detalles del pedido seleccionado
+
+### 1. Visualizar un Pedido
+
+**Opción A - Búsqueda por ID:**
+1. Ingresa el ID del pedido (ej: O001) en el campo de texto (formato de id: Oxxx)
+2. Haz clic en el botón "Search"
+3. El pedido se mostrará en el área de visualización
+
+**Opción B - Selección desde lista:**
+1. Haz clic en el combo box "Orders List"
+2. Selecciona el pedido deseado
+3. El pedido se mostrará automáticamente
+
+**Información mostrada:**
+- ID del pedido
+- Número de posiciones (artículos)
+- Cantidad total de unidades
+- Valor total bruto
+- Valor total con descuento
+- Detalles de cada artículo
+- Conversión a USD (si la API está disponible)
+
+### 2. Crear un Nuevo Pedido
+
+1. Haz clic en el botón **"Add New Order"** en la ventana principal
+2. Se abrirá la ventana "New Order"
+3. Para cada artículo:
+   - Ingresa el **nombre** del artículo
+   - Ingresa la **cantidad** (número entero positivo)
+   - Ingresa el **precio unitario** (número decimal)
+   - Ingresa el **descuento** en porcentaje (0-100)
+   - Haz clic en el botón **"+"** para agregar el artículo
+4. Repite el paso 3 para agregar más artículos
+5. Los totales se calculan automáticamente mientras agregas artículos
+6. Haz clic en **"Save Order"** para guardar el pedido
+7. El sistema generará automáticamente un ID (O000, O001, etc.)
+8. La ventana se cerrará y el pedido aparecerá en la lista principal
+
+**Validaciones:**
+- Todos los campos son obligatorios
+- La cantidad debe ser un número positivo
+- El descuento debe estar entre 0 y 100%
+- El pedido debe tener al menos un artículo
+
+### 3. Editar un Pedido Existente
+
+1. Primero, **visualiza el pedido** que deseas editar (usando búsqueda o selección)
+2. Haz clic en el botón **"Edit Order"**
+3. Confirma la edición en el diálogo de confirmación
+4. Se abrirá la ventana "Edit Order" con una tabla de artículos
+5. En la tabla, puedes editar:
+   - **Cantidad**: Haz doble clic en la celda y modifica el valor
+   - **Descuento (%)**: Haz doble clic en la celda y modifica el valor
+6. **No se pueden editar**: Nombre y Precio Unitario (campos bloqueados)
+7. Los totales se recalculan automáticamente al modificar valores
+8. Haz clic en **"Save Order"** para guardar los cambios
+9. Confirma el guardado en el diálogo
+10. La ventana se cerrará y la vista principal se actualizará con el pedido modificado
+
+**Validaciones:**
+- La cantidad debe ser mayor que 0
+- El descuento debe estar entre 0 y 100%
+
+### 4. Eliminar un Pedido
+
+1. **Selecciona o busca** el pedido que deseas eliminar
+2. Haz clic en el botón **"Delete Order"**
+3. Confirma la eliminación en el diálogo de confirmación
+4. El pedido se eliminará de la lista y del archivo JSON
+5. La lista de pedidos se actualizará automáticamente
+6. El área de visualización se limpiará
+
+### 5. Conversión de Moneda
+
+La aplicación intenta convertir automáticamente el total del pedido de EUR a USD cuando visualizas un pedido. Si la API de conversión no está disponible:
+
+- Se mostrará el pedido con el total en EUR
+- Aparecerá un mensaje de advertencia indicando que no se pudo obtener el tipo de cambio
+- La aplicación continuará funcionando normalmente
+
+### Notas Importantes
+
+- Todos los cambios se guardan automáticamente en el archivo `orders.json`
+- Los pedidos se cargan automáticamente al iniciar la aplicación
+- Los IDs se generan automáticamente en formato secuencial (O000, O001, O002...)
+- Si cierras la ventana de creación/edición sin guardar, los cambios se perderán
+
+## Estructura del Proyecto
 
 ```
-https://api.exchangerate.host/latest?base=EUR&symbols=USD
+Aleksei-Limin-M22-Intro-Ing-Software/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/
+│   │   │   ├── Main.java
+│   │   │   ├── controller/
+│   │   │   │   ├── OrderController.java
+│   │   │   │   ├── NewOrderController.java
+│   │   │   │   └── EditOrderController.java
+│   │   │   ├── model/
+│   │   │   │   ├── Order.java
+│   │   │   │   ├── Article.java
+│   │   │   │   ├── Calculator.java
+│   │   │   │   ├── Searcher.java
+│   │   │   │   ├── ExchangeRate.java
+│   │   │   │   └── OrderRepository.java
+│   │   │   └── view/
+│   │   │       ├── OrderView.java
+│   │   │       ├── NewOrderView.java
+│   │   │       └── EditOrderView.java
+│   │   └── resources/
+│   │       ├── orders.json
+│   │       ├── app.png
+│   │       ├── logback.xml
+│   │       └── plantuml/
+│   └── test/java/
+├── pom.xml
+└── README.md
 ```
 
-### Ubicación y Funcionalidad
+## Arquitectura y Tecnologías
 
-La clase `ExchangeRate` se encuentra en `src/main/java/com/example/model/ExchangeRate.java` y es responsable de:
+### Arquitectura MVC
 
-- Realizar peticiones HTTP GET a la API de tipos de cambio utilizando Java 11 HttpClient
-- Parsear manualmente la respuesta JSON (sin usar bibliotecas externas)
-- Extraer el valor del tipo de cambio USD
-- Retornar el tipo de cambio como `BigDecimal` para precisión en cálculos monetarios
+El proyecto sigue el patrón **Modelo-Vista-Controlador**:
 
-**Método principal**: `public static BigDecimal getCurrentEurUsdRate() throws Exception`
+- **Modelo**: `Order`, `Article`, `OrderRepository`, `Calculator`, `Searcher`, `ExchangeRate`
+- **Vista**: `OrderView`, `NewOrderView`, `EditOrderView`
+- **Controlador**: `OrderController`, `NewOrderController`, `EditOrderController`
 
-### Comportamiento cuando la API no está disponible
+### Tecnologías Utilizadas
 
-Si la API no está disponible o falla la petición (por ejemplo, problemas de red, timeout, o respuesta inválida), la aplicación:
+- **Java 17**: Lenguaje de programación
+- **Maven**: Gestión de dependencias y construcción
+- **Swing (JFrame)**: Interfaz gráfica de usuario
+- **Jackson Databind 2.17.0**: Serialización/deserialización JSON
+- **SLF4J + Logback**: Sistema de logging
+- **JUnit Jupiter 5.13.0**: Pruebas unitarias
 
-- Captura la excepción y registra una advertencia en los logs
-- Muestra el pedido con el total en EUR
-- Muestra un mensaje de advertencia indicando que no se pudo obtener el tipo de cambio
-- La aplicación continúa funcionando normalmente sin la conversión a USD
+### Persistencia de Datos
 
-### Modificaciones Realizadas
+Los pedidos se almacenan en `src/main/resources/orders.json` en formato JSON. El archivo se actualiza automáticamente al crear, modificar o eliminar pedidos.
 
-**OrderController**: Después de encontrar un pedido, calcula el total en EUR usando `getDiscountedTotal()`, llama a `ExchangeRate.getCurrentEurUsdRate()` para obtener el tipo de cambio, calcula el total en USD, y muestra los resultados. En caso de error de la API, muestra una advertencia.
+**Formato JSON:**
+```json
+[
+  {
+    "id": "O000",
+    "articles": [
+      {
+        "name": "Artículo 1",
+        "quantity": 2,
+        "unitPrice": 10.5,
+        "discount": 5.0
+      }
+    ]
+  }
+]
+```
 
-**OrderView**: Se han añadido dos nuevos métodos:
-- `showOrder(Order order, BigDecimal totalEur, BigDecimal rate, BigDecimal totalUsd)`: Muestra el pedido con la conversión a USD
-- `showOrderWithoutUsd(Order order, BigDecimal totalEur, String warning)`: Muestra el pedido con advertencia cuando la API no está disponible
+### API de Conversión de Moneda
+
+La aplicación utiliza la API `https://api.exchangerate-api.com/v4/latest/EUR` para obtener el tipo de cambio EUR/USD en tiempo real. La implementación se encuentra en `ExchangeRate.java` y utiliza Java 11 HttpClient para realizar peticiones HTTP GET.
+
+**Comportamiento:**
+- Si la API está disponible: muestra el total en EUR y USD
+- Si la API no está disponible: muestra solo el total en EUR con una advertencia
+- La aplicación continúa funcionando normalmente en ambos casos
+
+### Logging
+
+El sistema utiliza SLF4J con Logback (`logback.xml`) para registrar:
+- Carga y guardado de pedidos
+- Advertencias de API de conversión
+- Errores de I/O
+- Información de depuración
 
 ## Contribución
 
-Si deseas contribuir a este proyecto, por favor sigue estos pasos:
-- Haz un fork del repositorio.
-- Crea una nueva rama (git checkout -b feature-nueva-funcionalidad).
-- Realiza tus cambios y haz commit (git commit -am 'Agregué nueva funcionalidad').
-- Empuja los cambios a tu fork (git push origin feature-nueva-funcionalidad).
-- Crea un pull request.
+1. Haz un fork del repositorio
+2. Crea una nueva rama (`git checkout -b feature-nueva-funcionalidad`)
+3. Realiza tus cambios y haz commit (`git commit -am 'Agregué nueva funcionalidad'`)
+4. Empuja los cambios (`git push origin feature-nueva-funcionalidad`)
+5. Crea un pull request
 
 ## Licencia
 
