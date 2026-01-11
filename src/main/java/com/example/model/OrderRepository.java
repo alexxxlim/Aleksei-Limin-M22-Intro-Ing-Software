@@ -67,4 +67,34 @@ public class OrderRepository {
             throw new IOException("Cannot write orders file: " + e.getMessage(), e);
         }
     }
+
+    // Borrar un pedido por ID y guardar la lista actualizada en el json
+    public static Order deleteOrder(String orderId, List<Order> orders) throws IOException {
+        if (orderId == null || orderId.isEmpty()) {
+            return null;
+        }
+
+        // Buscar el pedido en la lista
+        Order orderToDelete = null;
+        for (Order order : orders) {
+            if (order.getId() != null && order.getId().equalsIgnoreCase(orderId)) {
+                orderToDelete = order;
+                break;
+            }
+        }
+
+        // Si no se encuentra, retornar null
+        if (orderToDelete == null) {
+            return null;
+        }
+
+        // Eliminar el pedido de la lista
+        orders.remove(orderToDelete);
+
+        // Guardar la lista actualizada en el json
+        saveOrders(orders);
+        log.info("Order {} deleted successfully", orderToDelete.getId());
+
+        return orderToDelete;
+    }
 }

@@ -31,6 +31,7 @@ public class OrderView extends JFrame {
     private JComboBox<String> orderIdComboBox = new JComboBox<>();
     private JButton addOrderButton = new JButton("Add New Order");
     private JTextArea resultArea = new JTextArea(10, 40);
+    private JButton deleteOrderButton = new JButton("Delete Order");
 
     public OrderView() {
         setTitle("Order Management");
@@ -63,9 +64,21 @@ public class OrderView extends JFrame {
         leftPanel.add(listPanel);
         leftPanel.add(addOrderPanel);
 
+        // Panel central con área de resultado y botón de borrado
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        
+        // Área de texto con scroll
+        centerPanel.add(new JScrollPane(resultArea));
+        
+        // Panel con botón de borrado (debajo del área de texto)
+        JPanel deleteButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        deleteButtonPanel.add(deleteOrderButton);
+        centerPanel.add(deleteButtonPanel);
+
         // Agregar todo al frame principal
         add(leftPanel, BorderLayout.WEST);
-        add(new JScrollPane(resultArea), BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
 
         pack();
         setVisible(true);
@@ -73,6 +86,10 @@ public class OrderView extends JFrame {
 
     public String getSearchId() {
         return searchField.getText().trim();
+    }
+
+    public JTextField getSearchField() {
+        return searchField;
     }
 
     public JButton getSearchButton() {
@@ -85,6 +102,10 @@ public class OrderView extends JFrame {
 
     public JButton getAddOrderButton() {
         return addOrderButton;
+    }
+
+    public JButton getDeleteOrderButton() {
+        return deleteOrderButton;
     }
 
     // Inicializa el combo box con la lista de IDs de pedidos
