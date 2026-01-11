@@ -48,22 +48,88 @@ public class OrderRepository {
 
     // Guardar lista de pedidos en el json
     public static void saveOrders(List<Order> orders) throws IOException {
-        String projectRoot = System.getProperty("user.dir");
-        Path sourceFilePath = Paths.get(projectRoot, "src", "main", "resources", ORDERS_FILE_NAME);
-        File file = sourceFilePath.toFile();
+        // Intentar encontrar el archivo fuente en src/main/resources
+        // Primero intentar usar el path del archivo cargado como referencia
+        File sourceFile = null;
+        try {
+            URL resource = Main.class.getClassLoader().getResource(ORDERS_FILE_NAME);
+            if (resource != null) {
+                Path loadedPath = Paths.get(resource.toURI());
+                File loadedFile = loadedPath.toFile();
+                String loadedPathStr = loadedFile.getAbsolutePath();
+                
+                // Si el archivo está en target/classes, encontrar el archivo fuente en src/main/resources
+                if (loadedPathStr.contains("target" + File.separator + "classes")) {
+                    // Reemplazar target/classes con src/main/resources
+                    String sourcePathStr = loadedPathStr.replace(
+                        "target" + File.separator + "classes", 
+                        "src" + File.separator + "main" + File.separator + "resources");
+                    sourceFile = new File(sourcePathStr);
+                    log.info("Detected target/classes path, using source path: {}", sourceFile.getAbsolutePath());
+                } else if (loadedPathStr.contains("src" + File.separator + "main" + File.separator + "resources")) {
+                    // Ya está en src/main/resources
+                    sourceFile = loadedFile;
+                    log.info("File already in src/main/resources: {}", sourceFile.getAbsolutePath());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Could not determine source file from loaded resource: {}", e.getMessage());
+        }
+        
+        // Si no se pudo determinar desde el archivo cargado, usar user.dir
+        if (sourceFile == null || !sourceFile.exists()) {
+            String projectRoot = System.getProperty("user.dir");
+            Path sourceFilePath = Paths.get(projectRoot, "src", "main", "resources", ORDERS_FILE_NAME);
+            sourceFile = sourceFilePath.toFile();
+            log.info("Using user.dir to determine path: {}", sourceFile.getAbsolutePath());
+        }
+        
+        File file = sourceFile;
 
-        // Verificar que el directorio existe
+        log.info("Attempting to save orders to: {}", file.getAbsolutePath());
+        log.info("File exists before save: {}", file.exists());
+        log.info("Parent directory exists: {}", file.getParentFile().exists());
+        log.info("Can write to file: {}", file.exists() ? file.canWrite() : file.getParentFile().canWrite());
+
+        // Si el archivo fuente no existe, intentar crear el directorio
         File parentDir = file.getParentFile();
         if (!parentDir.exists()) {
-            log.error("Directory does not exist: {}", parentDir.getAbsolutePath());
-            throw new IOException("Resources directory not found: " + parentDir.getAbsolutePath());
+            boolean created = parentDir.mkdirs();
+            if (!created) {
+                log.error("Could not create directory: {}", parentDir.getAbsolutePath());
+                throw new IOException("Resources directory not found and could not be created: " + parentDir.getAbsolutePath());
+            }
+            log.info("Created directory: {}", parentDir.getAbsolutePath());
+        }
+
+        // Verificar que podemos escribir en el archivo
+        if (file.exists() && !file.canWrite()) {
+            log.error("File exists but is not writable: {}", file.getAbsolutePath());
+            throw new IOException("File is not writable: " + file.getAbsolutePath());
         }
 
         try {
+            long sizeBefore = file.exists() ? file.length() : 0;
+            
+            // Escribir el archivo
             mapper.writerWithDefaultPrettyPrinter().writeValue(file, orders);
-            log.info("Orders saved successfully to {} . Total: {}", file.getAbsolutePath(), orders.size());
+            
+            // Verificar que el archivo se escribió correctamente
+            if (!file.exists()) {
+                log.error("File does not exist after write: {}", file.getAbsolutePath());
+                throw new IOException("File was not created");
+            }
+            
+            if (file.length() == 0) {
+                log.error("File is empty after write: {}", file.getAbsolutePath());
+                throw new IOException("File was written but is empty");
+            }
+            
+            long sizeAfter = file.length();
+            log.info("Orders saved successfully to {} . Total: {} orders, File size: {} bytes (was: {} bytes)", 
+                    file.getAbsolutePath(), orders.size(), sizeAfter, sizeBefore);
         } catch (IOException e) {
-            log.error("Error writing to file {}: {}", file.getAbsolutePath(), e.getMessage());
+            log.error("Error writing to file {}: {}", file.getAbsolutePath(), e.getMessage(), e);
             throw new IOException("Cannot write orders file: " + e.getMessage(), e);
         }
     }

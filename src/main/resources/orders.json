@@ -16,14 +16,14 @@
     "discountedAmount" : 30.0
   }, {
     "name" : "Charger",
-    "quantity" : 1,
+    "quantity" : 3,
     "unitPrice" : 20.0,
-    "discount" : 5.0,
-    "grossAmount" : 20.0,
-    "discountedAmount" : 19.0
+    "discount" : 15.0,
+    "grossAmount" : 60.0,
+    "discountedAmount" : 51.0
   } ],
-  "grossTotal" : 150.0,
-  "discountedTotal" : 139.0
+  "grossTotal" : 190.0,
+  "discountedTotal" : 171.0
 }, {
   "id" : "O002",
   "articles" : [ {

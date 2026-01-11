@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.example.model.ExchangeRate;
 import com.example.model.Order;
 import com.example.model.OrderRepository;
+import com.example.view.EditOrderView;
 import com.example.view.NewOrderView;
 import com.example.view.OrderView;
 
@@ -49,6 +50,9 @@ public class OrderController {
 
         // Listener para abrir la ventana de nuevo pedido
         view.getAddOrderButton().addActionListener(e -> openNewOrderWindow());
+
+        // Listener para editar un pedido
+        view.getEditOrderButton().addActionListener(e -> editOrder());
 
         // Listener para borrar un pedido
         view.getDeleteOrderButton().addActionListener(e -> deleteOrder());
@@ -136,6 +140,36 @@ public class OrderController {
         // El nuevo controlador usará la misma lista de pedidos y la vista principal
         new NewOrderController(newOrderView, view, orders);
         newOrderView.setVisible(true);
+    }
+
+    // Abrir una ventana para editar el pedido actual
+    private void editOrder() {
+        // Obtener el pedido actualmente mostrado
+        Order currentOrder = view.getCurrentOrder();
+
+        // Verificar que hay un pedido seleccionado
+        if (currentOrder == null) {
+            JOptionPane.showMessageDialog(view,
+                    "Por favor, seleccione o busque un pedido para editar.",
+                    "No hay pedido seleccionado",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Mostrar diálogo de confirmación con el ID del pedido
+        int confirm = JOptionPane.showConfirmDialog(view,
+                "¿Desea editar el pedido " + currentOrder.getId() + "?",
+                "Confirm Edit",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Abrir ventana de edición
+            EditOrderView editOrderView = new EditOrderView();
+            // El controlador usará el pedido actual y la lista de pedidos
+            new EditOrderController(editOrderView, view, currentOrder, orders);
+            editOrderView.setVisible(true);
+        }
     }
 
     // Borrar un pedido de la lista y del json

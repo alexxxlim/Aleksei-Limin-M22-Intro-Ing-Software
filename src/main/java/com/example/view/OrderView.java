@@ -31,7 +31,10 @@ public class OrderView extends JFrame {
     private JComboBox<String> orderIdComboBox = new JComboBox<>();
     private JButton addOrderButton = new JButton("Add New Order");
     private JTextArea resultArea = new JTextArea(10, 40);
+    private JButton editOrderButton = new JButton("Edit Order");
     private JButton deleteOrderButton = new JButton("Delete Order");
+    
+    private Order currentOrder;
 
     public OrderView() {
         setTitle("Order Management");
@@ -55,7 +58,7 @@ public class OrderView extends JFrame {
         listPanel.add(new JLabel("Orders List: "));
         listPanel.add(orderIdComboBox);
 
-        // Botón para crear un nuevo pedido (debajo de la lista)
+        // Botón para crear un nuevo pedido
         JPanel addOrderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         addOrderPanel.add(addOrderButton);
 
@@ -64,17 +67,18 @@ public class OrderView extends JFrame {
         leftPanel.add(listPanel);
         leftPanel.add(addOrderPanel);
 
-        // Panel central con área de resultado y botón de borrado
+        // Panel central con área de resultado
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         
         // Área de texto con scroll
         centerPanel.add(new JScrollPane(resultArea));
         
-        // Panel con botón de borrado (debajo del área de texto)
-        JPanel deleteButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        deleteButtonPanel.add(deleteOrderButton);
-        centerPanel.add(deleteButtonPanel);
+        // Panel con botones de edición y borrado
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonsPanel.add(editOrderButton);
+        buttonsPanel.add(deleteOrderButton);
+        centerPanel.add(buttonsPanel);
 
         // Agregar todo al frame principal
         add(leftPanel, BorderLayout.WEST);
@@ -104,14 +108,21 @@ public class OrderView extends JFrame {
         return addOrderButton;
     }
 
+    public JButton getEditOrderButton() {
+        return editOrderButton;
+    }
+
     public JButton getDeleteOrderButton() {
         return deleteOrderButton;
+    }
+
+    public Order getCurrentOrder() {
+        return currentOrder;
     }
 
     // Inicializa el combo box con la lista de IDs de pedidos
     public void initializeOrderIds(List<String> orderIds) {
         orderIdComboBox.removeAllItems();
-        // Agregar opción por defecto "-Not selected-"
         orderIdComboBox.addItem("-Not selected-");
         for (String id : orderIds) {
             orderIdComboBox.addItem(id);
@@ -119,6 +130,8 @@ public class OrderView extends JFrame {
     }
 
     public void displayOrder(Order order) {
+        currentOrder = order;
+        
         if (order == null) {
             resultArea.setText("Order not found...");
             return;
@@ -127,6 +140,8 @@ public class OrderView extends JFrame {
     }
 
     public void showOrder(Order order, BigDecimal totalEur, BigDecimal rate, BigDecimal totalUsd) {
+        currentOrder = order;
+        
         if (order == null) {
             resultArea.setText("Order not found...");
             return;
@@ -143,6 +158,8 @@ public class OrderView extends JFrame {
     }
 
     public void showOrderWithoutUsd(Order order, BigDecimal totalEur, String warning) {
+        currentOrder = order;
+        
         if (order == null) {
             resultArea.setText("Order not found...");
             return;
@@ -160,7 +177,6 @@ public class OrderView extends JFrame {
     private void setAppIcon() {
         java.net.URL iconUrl = getClass().getResource("/app.png");
         if (iconUrl == null) {
-            // Alternative loading method attempt
             iconUrl = getClass().getClassLoader().getResource("app.png");
         }
         
