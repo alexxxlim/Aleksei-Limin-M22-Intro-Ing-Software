@@ -12,66 +12,60 @@ import java.util.regex.Pattern;
 public class ExchangeRate {
 
     private static final String API_URL =
-            "https://api.exchangerate.host/latest?base=EUR&symbols=USD";
-
-    private static final BigDecimal FALLBACK_RATE = new BigDecimal("1.08");
+            "https://api.exchangerate-api.com/v4/latest/EUR";
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    public static BigDecimal getCurrentEurUsdRate() {
+    public static BigDecimal getCurrentEurUsdRate() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL))
+                .timeout(Duration.ofSeconds(10))
+                .GET()
+                .build();
+
+        HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("API returned status code: " + response.statusCode());
+        }
+
+        String jsonResponse = response.body();
+        if (jsonResponse == null || jsonResponse.isEmpty()) {
+            throw new RuntimeException("API returned empty response");
+        }
+
+        String usdValue = extractUsdFromJson(jsonResponse);
+        if (usdValue == null) {
+            throw new RuntimeException("Could not extract USD rate from API response: " + jsonResponse);
+        }
+
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL))
-                    .timeout(Duration.ofSeconds(10))
-                    .GET()
-                    .build();
-
-            HttpResponse<String> response =
-                    httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() != 200) {
-                System.out.println("WARN: API status code = " + response.statusCode()
-                        + ", using fallback rate " + FALLBACK_RATE);
-                return FALLBACK_RATE;
-            }
-
-            String jsonResponse = response.body();
-            if (jsonResponse == null || jsonResponse.isEmpty()) {
-                System.out.println("WARN: Empty API response, using fallback rate " + FALLBACK_RATE);
-                return FALLBACK_RATE;
-            }
-
-            String usdValue = extractUsdFromJson(jsonResponse);
-            if (usdValue == null) {
-                System.out.println("WARN: Could not extract USD from response, using fallback rate "
-                        + FALLBACK_RATE);
-                return FALLBACK_RATE;
-            }
-
-            try {
-                return new BigDecimal(usdValue);
-            } catch (NumberFormatException e) {
-                System.out.println("WARN: Invalid USD rate format '" + usdValue
-                        + "', using fallback rate " + FALLBACK_RATE);
-                return FALLBACK_RATE;
-            }
-
-        } catch (Exception e) {
-            System.out.println("WARN: Exception while calling API: " + e.getMessage()
-                    + ", using fallback rate " + FALLBACK_RATE);
-            return FALLBACK_RATE;
+            return new BigDecimal(usdValue);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid USD rate format: " + usdValue, e);
         }
     }
 
     private static String extractUsdFromJson(String json) {
-        Pattern pattern = Pattern.compile("\"USD\"\\s*:\\s*(-?[0-9]+(?:\\.[0-9]+)?)",
-                Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(json);
+        // API exchangerate-api.com devuelve: {"rates": {"USD": 1.08, ...}, "base": "EUR", "date": "..."}
+        // Intentar diferentes patrones para diferentes formatos de respuesta
+        Pattern[] patterns = {
+            // Patrón para formato: "rates": {"USD": 1.08, ...}
+            Pattern.compile("\"rates\"\\s*:\\s*\\{[^}]*\"USD\"\\s*:\\s*(-?[0-9]+(?:\\.[0-9]+)?)", Pattern.CASE_INSENSITIVE),
+            // Patrón для формата: "USD": 1.08 (прямо в корне)
+            Pattern.compile("\"USD\"\\s*:\\s*(-?[0-9]+(?:\\.[0-9]+)?)", Pattern.CASE_INSENSITIVE),
+            // Patrón alternativo con comillas
+            Pattern.compile("\"USD\"\\s*:\\s*\"?(-?[0-9]+(?:\\.[0-9]+)?)\"?", Pattern.CASE_INSENSITIVE)
+        };
 
-        if (matcher.find()) {
-            return matcher.group(1).trim();
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(json);
+            if (matcher.find()) {
+                return matcher.group(1).trim();
+            }
         }
         return null;
     }

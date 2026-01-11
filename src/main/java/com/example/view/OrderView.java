@@ -1,19 +1,35 @@
 package com.example.view;
 
-import javax.swing.*;
-
-import com.example.model.Order;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Image;
+import java.awt.Taskbar;
+import java.awt.Toolkit;
 import java.math.BigDecimal;
+import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.example.model.Order;
 
 public class OrderView extends JFrame {
     private static final Logger log = LoggerFactory.getLogger(OrderView.class);
     
     private JTextField searchField = new JTextField(10);
     private JButton searchButton = new JButton("Search");
+    private JComboBox<String> orderIdComboBox = new JComboBox<>();
+    private JButton addOrderButton = new JButton("Add New Order");
     private JTextArea resultArea = new JTextArea(10, 40);
 
     public OrderView() {
@@ -21,12 +37,35 @@ public class OrderView extends JFrame {
         setAppIcon();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new FlowLayout());
+        setLayout(new BorderLayout());
 
-        add(new JLabel("Order ID:"));
-        add(searchField);
-        add(searchButton);
-        add(new JScrollPane(resultArea));
+        // Panel izquierdo con búsqueda y lista
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+
+        // Panel de búsqueda
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(new JLabel("Order ID:"));
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
+
+        // Panel de lista de pedidos
+        JPanel listPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        listPanel.add(new JLabel("Orders List: "));
+        listPanel.add(orderIdComboBox);
+
+        // Botón para crear un nuevo pedido (debajo de la lista)
+        JPanel addOrderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        addOrderPanel.add(addOrderButton);
+
+        // Agregar paneles al panel izquierdo
+        leftPanel.add(searchPanel);
+        leftPanel.add(listPanel);
+        leftPanel.add(addOrderPanel);
+
+        // Agregar todo al frame principal
+        add(leftPanel, BorderLayout.WEST);
+        add(new JScrollPane(resultArea), BorderLayout.CENTER);
 
         pack();
         setVisible(true);
@@ -38,6 +77,24 @@ public class OrderView extends JFrame {
 
     public JButton getSearchButton() {
         return searchButton;
+    }
+
+    public JComboBox<String> getOrderIdComboBox() {
+        return orderIdComboBox;
+    }
+
+    public JButton getAddOrderButton() {
+        return addOrderButton;
+    }
+
+    // Inicializa el combo box con la lista de IDs de pedidos
+    public void initializeOrderIds(List<String> orderIds) {
+        orderIdComboBox.removeAllItems();
+        // Agregar opción por defecto "-Not selected-"
+        orderIdComboBox.addItem("-Not selected-");
+        for (String id : orderIds) {
+            orderIdComboBox.addItem(id);
+        }
     }
 
     public void displayOrder(Order order) {

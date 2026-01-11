@@ -1,20 +1,17 @@
 package com.example;
 
-import com.example.controller.*;
-import com.example.model.*;
-import com.example.view.*;
+import java.io.IOException;
+import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-
-import java.io.InputStream;
-import java.io.IOException;
-
-import java.util.List;
+import com.example.controller.OrderController;
+import com.example.model.Order;
+import com.example.model.OrderRepository;
+import com.example.view.OrderView;
 
 public class Main {
 
@@ -25,14 +22,7 @@ public class Main {
         log.info("Starting Order Managment System. . .");
         System.out.println();
 
-        InputStream file = Main.class.getClassLoader().getResourceAsStream("orders.json");
-        if (file == null) {
-            log.error("...Error. file:\"orders.json\" not found...");
-            return;
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        List<Order> orders = mapper.readValue(file, mapper.getTypeFactory().constructCollectionType(List.class, Order.class));
+        List<Order> orders = OrderRepository.loadOrders();
 
         for (Order order : orders) {
             log.debug("Loaded order: {}", order.getId());
