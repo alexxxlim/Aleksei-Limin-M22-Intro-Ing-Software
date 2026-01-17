@@ -27,12 +27,12 @@ Sistema de gestión de pedidos desarrollado en **Java 17** con **Maven**, que im
 - Cálculo automático de totales brutos y con descuentos
 - Conversión de moneda EUR a USD en tiempo real
 - Persistencia de datos en archivo JSON
-- Generación automática de IDs (formato O000, O001, etc.)
+- Generación automática de IDs (formato `O%03d`: O001, O002, etc.)
 - Carga automática de pedidos al iniciar
 
 ## Requisitos
 
-- **Java 17+** (JDK) - Descarga desde [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) o [OpenJDK](https://openjdk.java.net/)
+- **Java 17+** (JDK) - Descarga desde [Oracle](https://www.oracle.com/java/technologies/downloads/) o [OpenJDK](https://openjdk.org/)
 - **Maven** - Instrucciones en [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
 - **IDE recomendada:** Visual Studio Code, IntelliJ IDEA o Eclipse
 
@@ -43,7 +43,7 @@ Sistema de gestión de pedidos desarrollado en **Java 17** con **Maven**, que im
 ```bash
 java -version  # Verificar Java 17+
 mvn -version   # Verificar Maven
-//(mvnd -version) # Verificar Maven con Daemon
+# mvnd -version  # (opcional) Verificar Maven con Daemon
 ```
 
 ### Extensiones IDE (Visual Studio Code)
@@ -93,7 +93,7 @@ Al iniciar la aplicación, se muestra la ventana principal con:
 - Valor total bruto
 - Valor total con descuento
 - Detalles de cada artículo
-- Conversión a USD (si la API está disponible)
+- Conversión a USD (con el tipo de cambio cargado al iniciar; si falla, se usa 1.0)
 
 ### 2. Crear un Nuevo Pedido
 
@@ -108,7 +108,7 @@ Al iniciar la aplicación, se muestra la ventana principal con:
 4. Repite el paso 3 para agregar más artículos
 5. Los totales se calculan automáticamente mientras agregas artículos
 6. Haz clic en **"Save Order"** para guardar el pedido
-7. El sistema generará automáticamente un ID (O000, O001, etc.)
+7. El sistema generará automáticamente un ID (formato `O%03d`: O001, O002, O003...)
 8. La ventana se cerrará y el pedido aparecerá en la lista principal
 
 **Validaciones:**
@@ -147,17 +147,19 @@ Al iniciar la aplicación, se muestra la ventana principal con:
 
 ### 5. Conversión de Moneda
 
-La aplicación intenta convertir automáticamente el total del pedido de EUR a USD cuando visualizas un pedido. Si la API de conversión no está disponible:
+La aplicación carga el tipo de cambio **una sola vez al iniciar** y lo guarda en caché. Luego convierte automáticamente el total del pedido de EUR a USD cuando visualizas un pedido.
 
-- Se mostrará el pedido con el total en EUR
+Si la API de conversión no está disponible al iniciar:
+
 - Aparecerá un mensaje de advertencia indicando que no se pudo obtener el tipo de cambio
+- Se utilizará **1.0** como valor por defecto
 - La aplicación continuará funcionando normalmente
 
 ### Notas Importantes
 
 - Todos los cambios se guardan automáticamente en el archivo `orders.json`
 - Los pedidos se cargan automáticamente al iniciar la aplicación
-- Los IDs se generan automáticamente en formato secuencial (O000, O001, O002...)
+- Los IDs se generan automáticamente en formato secuencial (formato `O%03d`: O001, O002, O003...)
 - Si cierras la ventana de creación/edición sin guardar, los cambios se perderán
 
 ## Estructura del Proyecto
@@ -220,26 +222,32 @@ Los pedidos se almacenan en `src/main/resources/orders.json` en formato JSON. El
 ```json
 [
   {
-    "id": "O000",
+    "id": "O001",
     "articles": [
       {
         "name": "Artículo 1",
         "quantity": 2,
         "unitPrice": 10.5,
-        "discount": 5.0
+        "discount": 5.0,
+        "grossAmount": 21.0,
+        "discountedAmount": 19.95
       }
-    ]
+    ],
+    "grossTotal": 21.0,
+    "discountedTotal": 19.95
   }
 ]
 ```
+
+**Nota:** además de los campos principales (`id`, `articles`, `name`, `quantity`, `unitPrice`, `discount`), el archivo puede incluir campos calculados como `grossAmount`, `discountedAmount`, `grossTotal`, `discountedTotal`.
 
 ### API de Conversión de Moneda
 
 La aplicación utiliza la API `https://api.exchangerate-api.com/v4/latest/EUR` para obtener el tipo de cambio EUR/USD en tiempo real. La implementación se encuentra en `ExchangeRate.java` y utiliza Java 11 HttpClient para realizar peticiones HTTP GET.
 
 **Comportamiento:**
-- Si la API está disponible: muestra el total en EUR y USD
-- Si la API no está disponible: muestra solo el total en EUR con una advertencia
+- Si la API está disponible al iniciar: muestra el total en EUR y USD
+- Si la API no está disponible al iniciar: usa 1.0 por defecto y muestra una advertencia
 - La aplicación continúa funcionando normalmente en ambos casos
 
 ### Logging

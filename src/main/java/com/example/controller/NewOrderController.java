@@ -92,6 +92,7 @@ public class NewOrderController {
 
     // Guardar el pedido en memoria y en json
     private void saveOrder() {
+        // Validacion de datos
         if (articles.isEmpty()) {
             JOptionPane.showMessageDialog(view,
                     "El pedido debe tener al menos un artículo.",
@@ -100,31 +101,40 @@ public class NewOrderController {
             return;
         }
 
+        Order newOrder = createNewOrder();
+        String newId = newOrder.getId();
+
+        try {
+            OrderRepository.saveOrders(orders);
+            log.info("New order created with id {}", newId);
+            finishAfterSave(newId);
+        } catch (IOException e) {
+            showSaveError(e);
+        }
+    }
+
+    private Order createNewOrder() {
         String newId = generateNewOrderId();
         Order newOrder = new Order(newId, new ArrayList<>(articles));
         orders.add(newOrder);
+        return newOrder;
+    }
 
-        try {
-            // Guardar en el fichero json
-            OrderRepository.saveOrders(orders);
-            log.info("New order created with id {}", newId);
+    private void finishAfterSave(String newId) {
+        refreshOrderIdsInMainView();
+        JOptionPane.showMessageDialog(view,
+                "Pedido guardado correctamente con id: " + newId,
+                "Info",
+                JOptionPane.INFORMATION_MESSAGE);
+        view.dispose();
+    }
 
-            // Actualizar combo de ids en la vista principal
-            refreshOrderIdsInMainView();
-
-            JOptionPane.showMessageDialog(view,
-                    "Pedido guardado correctamente con id: " + newId,
-                    "Info",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-            view.dispose();
-        } catch (IOException e) {
-            log.error("Error saving orders to json: {}", e.getMessage());
-            JOptionPane.showMessageDialog(view,
-                    "No se pudo guardar el pedido en el fichero json.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+    private void showSaveError(IOException e) {
+        log.error("Error saving orders to json: {}", e.getMessage());
+        JOptionPane.showMessageDialog(view,
+                "No se pudo guardar el pedido en el fichero json.",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     // Generar un id nuevo en formato O000, O001, Oxxx... basado en los ids existentes

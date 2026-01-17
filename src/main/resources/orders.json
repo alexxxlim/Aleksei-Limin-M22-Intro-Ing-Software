@@ -78,11 +78,11 @@
   "id" : "O005",
   "articles" : [ {
     "name" : "Iphone X",
-    "quantity" : 1,
+    "quantity" : 3,
     "unitPrice" : 500.0,
     "discount" : 2.0,
-    "grossAmount" : 500.0,
-    "discountedAmount" : 490.0
+    "grossAmount" : 1500.0,
+    "discountedAmount" : 1470.0
   }, {
     "name" : "Nvidia Graphic card",
     "quantity" : 2,
@@ -105,6 +105,6 @@
     "grossAmount" : 3316.0,
     "discountedAmount" : 2818.6
   } ],
-  "grossTotal" : 5215.99,
-  "discountedTotal" : 4435.5913
+  "grossTotal" : 6215.99,
+  "discountedTotal" : 5415.5913
 } ]
