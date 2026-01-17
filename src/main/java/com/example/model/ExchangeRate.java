@@ -11,6 +11,10 @@ import java.util.regex.Pattern;
 
 public class ExchangeRate {
 
+    // Cache del tipo de cambio
+    private static double eurUsdRate = 1.0;
+    private static boolean loaded = false;
+
     private static final String API_URL =
             "https://api.exchangerate-api.com/v4/latest/EUR";
 
@@ -18,7 +22,41 @@ public class ExchangeRate {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    public static BigDecimal getCurrentEurUsdRate() throws Exception {
+    // Se carga una vez al iniciar la app
+    public static void init() {
+        try {
+            BigDecimal rate = fetchCurrentEurUsdRate();
+            eurUsdRate = rate.doubleValue();
+            loaded = true;
+            System.out.println("Tipo de cambio EUR/USD cargado: " + eurUsdRate);
+        } catch (Exception e) {
+            // Fallback si falla la API
+            eurUsdRate = 1.0;
+            loaded = false;
+            System.out.println("Error al cargar tipo de cambio. Se usa 1.0 por defecto.");
+        }
+    }
+
+    // Retorna el tipo de cambio desde el cache
+    public static double getEurUsdRate() {
+        if (!loaded) {
+            return 1.0;
+        }
+        return eurUsdRate;
+    }
+
+    // Verifica si el tipo de cambio fue cargado correctamente
+    public static boolean isLoaded() {
+        return loaded;
+    }
+
+    // Método legacy: retorna BigDecimal desde el cache (sin HTTP)
+    public static BigDecimal getCurrentEurUsdRate() {
+        return BigDecimal.valueOf(getEurUsdRate());
+    }
+
+    // Método privado que hace el HTTP request (solo se llama desde init)
+    private static BigDecimal fetchCurrentEurUsdRate() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_URL))
                 .timeout(Duration.ofSeconds(10))
@@ -55,7 +93,7 @@ public class ExchangeRate {
         Pattern[] patterns = {
             // Patrón para formato: "rates": {"USD": 1.08, ...}
             Pattern.compile("\"rates\"\\s*:\\s*\\{[^}]*\"USD\"\\s*:\\s*(-?[0-9]+(?:\\.[0-9]+)?)", Pattern.CASE_INSENSITIVE),
-            // Patrón для формата: "USD": 1.08 (прямо в корне)
+            // Patrón para formato: "USD": 1.08 (directamente en la raíz)
             Pattern.compile("\"USD\"\\s*:\\s*(-?[0-9]+(?:\\.[0-9]+)?)", Pattern.CASE_INSENSITIVE),
             // Patrón alternativo con comillas
             Pattern.compile("\"USD\"\\s*:\\s*\"?(-?[0-9]+(?:\\.[0-9]+)?)\"?", Pattern.CASE_INSENSITIVE)

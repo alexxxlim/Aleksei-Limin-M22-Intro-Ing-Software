@@ -81,19 +81,14 @@ public class OrderController {
             return;
         }
 
-        // Calculate total in EUR (using discounted total)
+        // Calcular total en EUR (usando total con descuento)
         BigDecimal totalEur = BigDecimal.valueOf(foundOrder.getDiscountedTotal());
 
-        // Get exchange rate and convert to USD
-        try {
-            BigDecimal rate = ExchangeRate.getCurrentEurUsdRate();
-            BigDecimal totalUsd = totalEur.multiply(rate);
-            view.showOrder(foundOrder, totalEur, rate, totalUsd);
-        } catch (Exception e) {
-            log.warn("Failed to get exchange rate: {}", e.getMessage());
-            String errorMessage = "No se pudo obtener el tipo de cambio. Error: " + e.getMessage();
-            view.showOrderWithoutUsd(foundOrder, totalEur, errorMessage);
-        }
+        // Obtener tipo de cambio desde cache y convertir a USD
+        double rateValue = ExchangeRate.getEurUsdRate();
+        BigDecimal rate = BigDecimal.valueOf(rateValue);
+        BigDecimal totalUsd = totalEur.multiply(rate);
+        view.showOrder(foundOrder, totalEur, rate, totalUsd);
     }
 
     // Método para manejar la selección del pedido desde el combo box
@@ -122,16 +117,11 @@ public class OrderController {
         // Calcular total en EUR (usando total con descuento)
         BigDecimal totalEur = BigDecimal.valueOf(foundOrder.getDiscountedTotal());
 
-        // Obtener tipo de cambio y convertir a USD
-        try {
-            BigDecimal rate = ExchangeRate.getCurrentEurUsdRate();
-            BigDecimal totalUsd = totalEur.multiply(rate);
-            view.showOrder(foundOrder, totalEur, rate, totalUsd);
-        } catch (Exception e) {
-            log.warn("Failed to get exchange rate: {}", e.getMessage());
-            String errorMessage = "No se pudo obtener el tipo de cambio. Error: " + e.getMessage();
-            view.showOrderWithoutUsd(foundOrder, totalEur, errorMessage);
-        }
+        // Obtener tipo de cambio desde cache y convertir a USD
+        double rateValue = ExchangeRate.getEurUsdRate();
+        BigDecimal rate = BigDecimal.valueOf(rateValue);
+        BigDecimal totalUsd = totalEur.multiply(rate);
+        view.showOrder(foundOrder, totalEur, rate, totalUsd);
     }
 
     // Abrir una nueva ventana para crear pedido

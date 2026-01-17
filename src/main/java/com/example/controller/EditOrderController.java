@@ -358,16 +358,11 @@ public class EditOrderController {
         // Calcular total en EUR
         BigDecimal totalEur = BigDecimal.valueOf(orderToEdit.getDiscountedTotal());
 
-        // Intentar obtener tipo de cambio y mostrar el pedido actualizado
-        try {
-            BigDecimal rate = ExchangeRate.getCurrentEurUsdRate();
-            BigDecimal totalUsd = totalEur.multiply(rate);
-            mainOrderView.showOrder(orderToEdit, totalEur, rate, totalUsd);
-        } catch (Exception e) {
-            log.warn("Failed to get exchange rate: {}", e.getMessage());
-            String errorMessage = "No se pudo obtener el tipo de cambio. Error: " + e.getMessage();
-            mainOrderView.showOrderWithoutUsd(orderToEdit, totalEur, errorMessage);
-        }
+        // Obtener tipo de cambio desde cache y mostrar el pedido actualizado
+        double rateValue = ExchangeRate.getEurUsdRate();
+        BigDecimal rate = BigDecimal.valueOf(rateValue);
+        BigDecimal totalUsd = totalEur.multiply(rate);
+        mainOrderView.showOrder(orderToEdit, totalEur, rate, totalUsd);
     }
 
     // Cerrar la ventana sin guardar
